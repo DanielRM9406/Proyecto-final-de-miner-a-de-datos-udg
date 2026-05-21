@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>BI & Minería de Datos | Framework Teórico + Dashboard Ejecutivo</title>
+    <!-- Google Fonts + Font Awesome -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(145deg, #eef2f9 0%, #e0e8f2 100%);
+            color: #0a2540;
+            line-height: 1.45;
+        }
+
+        /* Layout principal estilo "dashboard académico" */
+        .app-wrapper {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 2rem 1.8rem;
+        }
+
+        .split-layout {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+        }
+
+        /* ========= COLUMNA IZQUIERDA (BASE TEÓRICA) ========= */
+        .theory-column {
+            flex: 1.2;
+            background: rgba(255,255,255,0.96);
+            backdrop-filter: blur(0px);
+            border-radius: 2rem;
+            box-shadow: 0 20px 35px -12px rgba(0,0,0,0.12), 0 0 0 1px rgba(0,0,0,0.02);
+            overflow: hidden;
+            transition: transform 0.2s ease;
+        }
+
+        .theory-inner {
+            padding: 1.8rem 2rem;
+            height: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            scrollbar-width: thin;
+        }
+
+        /* scroll personalizado */
+        .theory-inner::-webkit-scrollbar {
+            width: 6px;
+        }
+        .theory-inner::-webkit-scrollbar-track {
+            background: #eef2fa;
+            border-radius: 10px;
+        }
+        .theory-inner::-webkit-scrollbar-thumb {
+            background: #b9d0e8;
+            border-radius: 10px;
+        }
+
+        /* ========= COLUMNA DERECHA (RESULTADOS) ========= */
+        .results-column {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 1.8rem;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding-right: 0.25rem;
+        }
+        .results-column::-webkit-scrollbar {
+            width: 6px;
+        }
+        .results-column::-webkit-scrollbar-track {
+            background: #eef2fa;
+            border-radius: 10px;
+        }
+
+        /* Tarjetas y elementos */
+        .hero-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 1.6rem;
+            border-bottom: 2px dashed #cbdde9;
+            padding-bottom: 0.7rem;
+        }
+        .hero-title h1 {
+            font-size: 1.85rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #1a4972, #0f2c44);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: -0.3px;
+        }
+        .section-tag {
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            background: #eef3fc;
+            display: inline-block;
+            padding: 0.2rem 0.9rem;
+            border-radius: 40px;
+            color: #1e6f9f;
+            margin: 1.2rem 0 0.8rem 0;
+        }
+        .topic-card {
+            background: #ffffff;
+            border-radius: 1.5rem;
+            padding: 1.1rem 1.3rem;
+            margin-bottom: 1rem;
+            border: 1px solid #e9f0f5;
+            transition: all 0.2s;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+        }
+        .topic-card:hover {
+            border-color: #bbd4f0;
+            box-shadow: 0 8px 20px -12px rgba(0, 32, 64, 0.12);
+            transform: translateY(-2px);
+        }
+        .topic-card h3 {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: #1e4e79;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 0.45rem;
+        }
+        .topic-card h3 i {
+            color: #3c8dbc;
+            font-size: 1rem;
+        }
+        .topic-card p, .topic-card ul {
+            font-size: 0.88rem;
+            color: #2c3f55;
+            margin-left: 1.4rem;
+        }
+        .topic-card li {
+            margin: 0.3rem 0;
+        }
+        .badge-modern {
+            background: #eef2fc;
+            color: #1b6392;
+            border-radius: 30px;
+            padding: 0.2rem 0.8rem;
+            font-size: 0.7rem;
+            font-weight: 500;
+            display: inline-block;
+            margin-right: 0.5rem;
+            margin-bottom: 0.35rem;
+            transition: all 0.1s;
+        }
+
+        /* Resultados: bloques modernos glassmorph suave */
+        .result-card {
+            background: rgba(255,255,255,0.94);
+            backdrop-filter: blur(2px);
+            border-radius: 1.8rem;
+            border: 1px solid rgba(165, 190, 210, 0.3);
+            overflow: hidden;
+            box-shadow: 0 12px 28px -12px rgba(0, 0, 0, 0.08);
+            transition: all 0.2s;
+        }
+        .result-header {
+            padding: 1rem 1.5rem;
+            background: #ffffffdd;
+            border-bottom: 1px solid #e9f0f5;
+            font-weight: 700;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #1f5e8e;
+        }
+        .result-body {
+            padding: 1.2rem 1.5rem;
+        }
+
+        /* Dashboard Gerencial (Elegante) */
+        .dashboard-premium {
+            background: linear-gradient(115deg, #ffffff 0%, #fefefe 100%);
+            border-radius: 2rem;
+            border: 1px solid #e2edf6;
+            overflow: hidden;
+        }
+        .dash-nav {
+            background: #112f44;
+            color: white;
+            padding: 0.9rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .kpi-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            padding: 1.5rem;
+            background: #fafdff;
+            border-bottom: 1px solid #eef3fc;
+        }
+        .kpi-item {
+            flex: 1;
+            background: white;
+            border-radius: 1.5rem;
+            padding: 1rem;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+            border: 1px solid #e0edf7;
+        }
+        .kpi-value {
+            font-size: 2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #1c6e9b, #134b6b);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            line-height: 1.2;
+        }
+        .chart-bars {
+            display: flex;
+            justify-content: center;
+            gap: 1.2rem;
+            padding: 1rem 0 1rem 0;
+            flex-wrap: wrap;
+        }
+        .bar-card {
+            text-align: center;
+            width: 80px;
+        }
+        .bar {
+            background: #3b82f6;
+            height: calc(70px + 30px);
+            border-radius: 16px 16px 8px 8px;
+            transition: 0.2s;
+            margin-bottom: 8px;
+            background: linear-gradient(0deg, #2c7cb6, #4895d6);
+        }
+
+        .btn-ghost {
+            background: #eef3fc;
+            border-radius: 40px;
+            padding: 0.2rem 0.8rem;
+            font-size: 0.7rem;
+            font-weight: 500;
+        }
+        hr.dashed {
+            margin: 0.8rem 0;
+            border: 0;
+            height: 1px;
+            background: linear-gradient(90deg, #cbdbe6, transparent);
+        }
+
+        @media (max-width: 1000px) {
+            .app-wrapper { padding: 1rem; }
+            .theory-inner { max-height: none; }
+            .results-column { max-height: none; }
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 1.5rem;
+            font-size: 0.7rem;
+            color: #4f6f8f;
+        }
+    </style>
+</head>
+<body>
+<div class="app-wrapper">
+    <div class="split-layout">
+        
+        <!-- COLUMNA IZQUIERDA - BASE TEÓRICA MEJORADA (GITHUB STYLE) -->
+        <div class="theory-column">
+            <div class="theory-inner">
+                <div class="hero-title">
+                    <i class="fas fa-graduation-cap" style="font-size: 2rem; color: #2c7da0;"></i>
+                    <h1>Marco Teórico<br><span style="font-size: 0.9rem; font-weight: 400;">Business Intelligence · Minería de Datos · KDD</span></h1>
+                </div>
+                
+                <div class="section-tag"><i class="fas fa-globe-americas"></i> Paradigmas actuales</div>
+                <div class="topic-card">
+                    <h3><i class="fas fa-satellite-dish"></i> Sociedad de la Información</h3>
+                    <p>Entorno donde las TIC democratizan el acceso masivo a datos. Énfasis en <strong>volumen, velocidad y disponibilidad</strong>.</p>
+                    <h3><i class="fas fa-brain"></i> Sociedad del Conocimiento</h3>
+                    <p>Evolución centrada en <strong>transformar información en valor</strong>, innovación y aprendizaje continuo. Capital intelectual como recurso estratégico.</p>
+                </div>
+
+                <div class="section-tag"><i class="fas fa-chart-simple"></i> Inteligencia de Negocios</div>
+                <div class="topic-card">
+                    <h3><i class="fas fa-chart-line"></i> Business Intelligence (BI)</h3>
+                    <p>Arquitectura, herramientas y prácticas para convertir datos en insights ejecutables, mejorando la toma de decisiones.</p>
+                    <h3><i class="fas fa-cubes"></i> OLAP (OnLine Analytical Processing)</h3>
+                    <p>Análisis multidimensional rápido: drill-down, roll-up, slicing/dicing. Fundamental para cubos de datos y dashboards.</p>
+                </div>
+
+                <div class="section-tag"><i class="fas fa-gem"></i> Minería de Datos · KDD</div>
+                <div class="topic-card">
+                    <h3><i class="fas fa-digging"></i> Minería de Datos</h3>
+                    <p>Extracción no trivial de patrones implícitos, previamente desconocidos y potencialmente útiles desde grandes conjuntos de datos.</p>
+                    <h3><i class="fas fa-sitemap"></i> Proceso KDD (Knowledge Discovery in Databases)</h3>
+                    <ul>
+                        <li><strong>Selección:</strong> Integración de fuentes relevantes.</li>
+                        <li><strong>Preprocesamiento/Limpieza:</strong> Ruido, outliers, valores nulos.</li>
+                        <li><strong>Transformación:</strong> Reducción, discretización, atributos derivados.</li>
+                        <li><strong>Minería de Datos:</strong> Algoritmos para hallar patrones.</li>
+                        <li><strong>Interpretación/Evaluación:</strong> Visualización y validación del conocimiento.</li>
+                    </ul>
+                </div>
+
+                <div class="topic-card">
+                    <h3><i class="fas fa-code-branch"></i> Tareas y Técnicas · Correlación</h3>
+                    <p><strong>Clasificación</strong> (árboles, SVM) · <strong>Clustering</strong> (k-means, DBSCAN) · <strong>Asociación</strong> (Apriori, FP-Growth) · <strong>Regresión</strong> · <strong>Anomalías</strong>.<br>
+                    Correlación directa entre tarea y técnica: clustering no supervisado → k-means; clasificación supervisada → Random Forest.</p>
+                </div>
+
+                <div class="section-tag"><i class="fas fa-tower-broadcast"></i> Infraestructura & Herramientas</div>
+                <div class="topic-card">
+                    <h3><i class="fas fa-exchange-alt"></i> Herramientas ETL (Ejemplos)</h3>
+                    <p><span class="badge-modern">Apache Airflow</span> <span class="badge-modern">Talend</span> <span class="badge-modern">Informatica</span> <span class="badge-modern">Pentaho DI</span> <span class="badge-modern">SSIS</span> <span class="badge-modern">dbt</span></p>
+                    <h3><i class="fas fa-database"></i> Data Warehouse · Data Marts · MOLAP</h3>
+                    <p><strong>Data Warehouse</strong>: repositorio central histórico. <strong>Data Mart</strong>: subconjunto departamental. <strong>MOLAP</strong>: cubos precalculados (Microsoft SSAS, icCube).</p>
+                </div>
+
+                <div class="topic-card">
+                    <h3><i class="fas fa-eye"></i> Vista Minable</h3>
+                    <p>Dataset limpio, integrado y proyectado, con atributos seleccionados para aplicar algoritmos de minería. Base del éxito del modelo.</p>
+                    <h3><i class="fas fa-microchip"></i> Herramientas de Minería de Datos</h3>
+                    <p><span class="badge-modern">RapidMiner</span> <span class="badge-modern">Weka</span> <span class="badge-modern">Scikit-learn (Python)</span> <span class="badge-modern">KNIME</span> <span class="badge-modern">Spark MLlib</span></p>
+                    <h3><i class="fas fa-chart-network"></i> Técnicas de Minería de Datos</h3>
+                    <p>Clustering, clasificación, árboles de decisión, redes neuronales, reglas de asociación, regresión logística, gradient boosting.</p>
+                </div>
+                <footer style="margin-top: 2rem;">Fundamentos sólidos para proyectos data-driven · Referencia académica</footer>
+            </div>
+        </div>
+
+        <!-- COLUMNA DERECHA - RESULTADOS (almacén, vistas minables, técnicas, DASHBOARD) -->
+        <div class="results-column">
+            <!-- card: Data Warehouse + Vistas minables -->
+            <div class="result-card">
+                <div class="result-header">
+                    <i class="fas fa-warehouse fa-fw"></i> Almacén de datos & Vistas Minables
+                    <span style="font-size: 0.7rem; margin-left: auto; background:#eef3fc; padding: 0 10px; border-radius: 20px;">Retail Analytics</span>
+                </div>
+                <div class="result-body">
+                    <p>Se implementó un <strong>Data Warehouse</strong> en arquitectura estrella (Hecho Ventas, dims: Tiempo, Producto, Cliente, Sucursal).<br> 
+                    ETL construido con <strong>Talend + Python</strong> integrando datos CRM y transaccionales. A partir del DW se generaron <strong>3 vistas minables</strong> listas para minería:</p>
+                    <ul style="margin: 0.8rem 0 0 1.5rem;">
+                        <li><i class="fas fa-chart-pie"></i> <code>vista_segmentacion_clientes</code> (edad, antigüedad, ticket promedio, frecuencia)</li>
+                        <li><i class="fas fa-shopping-basket"></i> <code>vista_cesta_compra</code> (productos por transacción) → reglas asociación</li>
+                        <li><i class="fas fa-chart-line"></i> <code>vista_tendencia_ventas</code> (serie temporal + indicadores macro)</li>
+                    </ul>
+                    <div class="btn-ghost" style="display: inline-block; margin-top: 10px;"><i class="fas fa-database"></i> Vistas materializadas en PostgreSQL + Cubos MOLAP</div>
+                </div>
+            </div>
+
+            <!-- Herramientas utilizadas análisis -->
+            <div class="result-card">
+                <div class="result-header"><i class="fas fa-toolbox"></i> Herramientas de Análisis de Datos</div>
+                <div class="result-body">
+                    <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                        <span class="badge-modern"><i class="fab fa-python"></i> Python (Pandas, sklearn)</span>
+                        <span class="badge-modern"><i class="fas fa-chart-simple"></i> Tableau + Power BI</span>
+                        <span class="badge-modern"><i class="fas fa-fire"></i> Apache Spark</span>
+                        <span class="badge-modern"><i class="fas fa-cubes"></i> SSAS (MOLAP)</span>
+                        <span class="badge-modern"><i class="fas fa-robot"></i> RapidMiner</span>
+                        <span class="badge-modern"><i class="fas fa-database"></i> dbt core</span>
+                        <span class="badge-modern"><i class="fas fa-cloud-upload-alt"></i> Airbyte ETL</span>
+                    </div>
+                    <hr class="dashed">
+                    <p><i class="fas fa-check-circle" style="color:#2c7da0;"></i> <strong>ETL + integración:</strong> Talend, Python scripts, y consultas SQL optimizadas para generar el repositorio analítico.</p>
+                </div>
+            </div>
+
+            <!-- Técnicas utilizadas -->
+            <div class="result-card">
+                <div class="result-header"><i class="fas fa-microscope"></i> Técnicas de Minería de Datos Aplicadas</div>
+                <div class="result-body">
+                    <div style="display: flex; flex-wrap: wrap; gap: 0.6rem; margin-bottom: 0.6rem;">
+                        <span class="badge-modern" style="background:#e6f2fc;"><i class="fas fa-chart-line"></i> Regresión Lineal</span>
+                        <span class="badge-modern" style="background:#e6f2fc;"><i class="fas fa-tree"></i> Árboles CART</span>
+                        <span class="badge-modern" style="background:#e6f2fc;"><i class="fas fa-shapes"></i> K-means ++</span>
+                        <span class="badge-modern" style="background:#e6f2fc;"><i class="fas fa-link"></i> Apriori</span>
+                        <span class="badge-modern" style="background:#e6f2fc;"><i class="fas fa-random"></i> Random Forest</span>
+                    </div>
+                    <ul style="margin-left: 1.2rem;">
+                        <li><strong>Segmentación no supervisada:</strong> Clustering K-means (4 clusters: "Premium", "Leales", "Ocasionales", "Potenciales").</li>
+                        <li><strong>Reglas de asociación (Apriori):</strong> Descubrimiento de productos complementarios (soporte 0.03, confianza 0.75).</li>
+                        <li><strong>Predicción churn:</strong> Árbol de decisión + Random Forest (accuracy 89%, AUC 0.94).</li>
+                        <li><strong>Pronóstico ventas trimestral:</strong> Regresión multivariante (R² 0.87) usando vistas minables con atributos de estacionalidad.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- DASHBOARD GERENCIAL - Panel Ejecutivo Moderno -->
+            <div class="dashboard-premium">
+                <div class="dash-nav">
+                    <span><i class="fas fa-chalkboard-user"></i> Panel Gerencial Estratégico</span>
+                    <span style="font-size: 0.75rem;"><i class="fas fa-calendar-alt"></i> Datos Q1 2026 · Basado en vistas minables</span>
+                </div>
+                <div class="kpi-grid">
+                    <div class="kpi-item"><i class="fas fa-percent" style="color:#2c7da0;"></i><div class="kpi-value">+24%</div><span>Crecimiento YoY</span></div>
+                    <div class="kpi-item"><i class="fas fa-dollar-sign" style="color:#2c7da0;"></i><div class="kpi-value">$3.2M</div><span>Ventas netas (último mes)</span></div>
+                    <div class="kpi-item"><i class="fas fa-user-check" style="color:#2c7da0;"></i><div class="kpi-value">87%</div><span>Retención clientes</span></div>
+                    <div class="kpi-item"><i class="fas fa-chart-line" style="color:#2c7da0;"></i><div class="kpi-value">4.8</div><span>Ticket promedio (KPI)</span></div>
+                </div>
+                <div class="result-body" style="padding-top: 0;">
+                    <p style="font-weight: 600;"><i class="fas fa-chart-column"></i> Ventas por categoría (vista minable integrada)</p>
+                    <div class="chart-bars">
+                        <div class="bar-card"><div class="bar" style="height: 110px;"></div><span>Electrónica</span><br><small>$1.2M</small></div>
+                        <div class="bar-card"><div class="bar" style="height: 85px; background: #2c9b77;"></div><span>Hogar</span><br><small>$0.9M</small></div>
+                        <div class="bar-card"><div class="bar" style="height: 65px; background: #f4a261;"></div><span>Moda</span><br><small>$0.68M</small></div>
+                        <div class="bar-card"><div class="bar" style="height: 95px; background: #e76f51;"></div><span>Deportes</span><br><small>$1.0M</small></div>
+                    </div>
+                    <hr class="dashed">
+                    <div style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem; font-size: 0.8rem;">
+                        <div><i class="fas fa-chart-pie"></i> <strong>Segmentos principales:</strong> Premium 34% · Leales 28%</div>
+                        <div><i class="fas fa-chart-line"></i> <strong>Top regla asociación:</strong> {Laptop, Mouse} → {Monitor} (confianza 0.81)</div>
+                        <div><i class="fas fa-robot"></i> <strong>Modelo activo:</strong> Predicción demanda (MLflow deploy)</div>
+                    </div>
+                </div>
+                <div style="background:#f3f9fe; padding: 0.8rem 1.5rem; border-top: 1px solid #e2edf6; font-size:0.75rem; display:flex; justify-content: space-between;">
+                    <span><i class="fas fa-chart-simple"></i> Dashboard derivado del análisis OLAP + Minería de datos</span>
+                    <span><i class="fas fa-chart-line"></i> Actualización diaria vía ETL automático</span>
+                </div>
+            </div>
+
+            <!-- Correlación resultado final -->
+            <div style="background: linear-gradient(105deg, #eaf5ff, #ffffff); border-radius: 1.5rem; padding: 0.9rem 1.2rem; border-left: 8px solid #2c7da0;">
+                <i class="fas fa-link" style="color:#205072;"></i> <strong>Conexión teoría-práctica:</strong> Las vistas minables fueron construidas desde el Data Warehouse usando procesos ETL (Talend). Las técnicas de minería (clustering, reglas de asociación, árboles) se seleccionaron según las tareas definidas en la base teórica. El panel gerencial refleja los KPIs descubiertos por los modelos.
+            </div>
+            <footer style="margin-top: 0.5rem;">Repositorio de ejemplo: Business Intelligence & Data Mining Framework · Dashboard interactivo conceptual</footer>
+        </div>
+    </div>
+</div>
+</body>
+</html>
